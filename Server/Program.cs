@@ -1,9 +1,12 @@
-﻿namespace Server;
+﻿using Server.Application;
+
+namespace Server;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        ServerApp server = new();
+        server.Init();
     }
 }
