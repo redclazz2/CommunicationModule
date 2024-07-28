@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Server.Communicator;
 using Server.Data;
 using Server.Interface;
@@ -7,7 +8,7 @@ namespace Server.Application
 {
     public class ServerApp : IMediator
     {
-        IServerCommunicator communicator;
+        readonly ServerCommunicator communicator;
 
         public ServerApp(){
             communicator = new ServerCommunicator(
@@ -18,7 +19,16 @@ namespace Server.Application
         }
 
         public void Init(){
-            communicator.Init();
+            System.Console.WriteLine("--- Initializing Server. ---");
+
+            System.Console.WriteLine("--- I: Initializing Communication Module. ---");
+            if(communicator.Init()){
+                System.Console.WriteLine("--- I: Success. ---");
+            }else{
+                System.Console.WriteLine("--- E: Failed to Initialize Communication Module .---");
+            }
+
+            communicator.Listen();
         }
 
         public void Notify(MessageType message, object data)
@@ -29,8 +39,12 @@ namespace Server.Application
                     System.Console.WriteLine($"Client: {messageData!.SessionId} says: {messageData!.Data}");
                     
                     //Do bussiness logic
-
+                    
+                    System.Console.WriteLine("Sending response ...");
                     communicator.Write(new MessageData(messageData.SessionId, "Pong"));
+
+                    System.Console.WriteLine("Closing server ...");
+                    communicator.Close();
                 break;
             }
         }

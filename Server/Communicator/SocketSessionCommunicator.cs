@@ -2,7 +2,6 @@ using System.Net.Sockets;
 using System.Text;
 using Server.Data;
 using Server.Domain.Base;
-using Server.Interface;
 
 namespace Server.Communicator
 {

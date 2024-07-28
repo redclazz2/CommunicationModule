@@ -21,25 +21,21 @@ namespace Server.Communicator
             );
         }
 
-        public void Init()
+        public bool Init()
         {
-            System.Console.WriteLine("Initializaing server socket ...");
-
-            if (serverSocket.Init())
-            {
-                System.Console.WriteLine("Success.");
-                Listen();
-            }
-            else
-            {
-                System.Console.WriteLine("Error: Couldn't initialize server socket.");
-            }
+            return serverSocket.Init();
         }
 
-        public bool Close()
+        public void Close()
         {
             System.Console.WriteLine("Closing server socket ...");
-            return serverSocket.Close();
+            if(serverSocket.Close()){
+                foreach(SocketSessionCommunicator c in clients.Values.Cast<SocketSessionCommunicator>()) c.Close();
+                clients.Clear();
+                System.Console.WriteLine("Bye!");
+            }else{
+                System.Console.WriteLine("Error on server communication module clean up.");
+            }
         }
 
         public void Listen()
@@ -48,7 +44,7 @@ namespace Server.Communicator
             //In the future a separated thread can be instantiated here.
 
             var session = serverSocket.Listen();
-            clients.Add(session.sessionId,session);
+            clients.Add(session.sessionId, session);
             Read(session);
         }
 

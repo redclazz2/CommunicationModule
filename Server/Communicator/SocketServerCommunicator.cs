@@ -7,8 +7,8 @@ namespace Server.Communicator
 {
     public class SocketServerCommunicator : ISocketServerCommunicator
     {
-        IPEndPoint ipEndpoint;
-        Socket socket;
+        readonly IPEndPoint ipEndpoint;
+        readonly Socket socket;
         int sessionCounter = 0;
 
         public SocketServerCommunicator(int port, ProtocolType protocolType)
