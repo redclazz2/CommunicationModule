@@ -1,6 +1,6 @@
 using System.Net.Sockets;
-using Server.Data;
 using Server.Interface;
+using Server.Data;
 
 namespace Server.Domain.Base
 {
@@ -16,8 +16,8 @@ namespace Server.Domain.Base
         
         public abstract bool Close();
 
-        public abstract Task<MessageData> Read();
+        public abstract Task<Request> Read();
 
-        public abstract void Write(MessageData data);
+        public abstract void Write(Response data);
     }
 }

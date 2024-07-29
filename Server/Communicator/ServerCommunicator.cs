@@ -1,6 +1,5 @@
-using System.Net.Sockets;
-using Server.Data;
 using Server.Interface;
+using Server.Data;
 using Shared.Interface;
 
 namespace Server.Communicator
@@ -11,61 +10,73 @@ namespace Server.Communicator
         private readonly ISocketServerCommunicator serverSocket;
         private readonly Dictionary<int, ISocketSessionCommunicator> clients = [];
 
-        public ServerCommunicator(IMediator mediator, int port, ProtocolType protocolType)
+        public ServerCommunicator(IMediator mediator)
         {
             this.mediator = mediator;
-
+            //TODO: Read Port and Protocol from configuration file
             serverSocket = new SocketServerCommunicator(
-                port,
-                protocolType
+                8056,
+                System.Net.Sockets.ProtocolType.Tcp
             );
         }
 
         public bool Init()
         {
-            return serverSocket.Init();
+            System.Console.WriteLine("--- I: Initializing Communication Module. ---");
+            var init = serverSocket.Init();
+
+            if(init){
+                System.Console.WriteLine("--- I: Success. ---");
+            }else{
+                System.Console.WriteLine("--- E: Failed to Initialize Communication Module. ---");
+            }
+
+            return  init;
         }
 
         public void Close()
         {
             System.Console.WriteLine("Closing server socket ...");
-            if(serverSocket.Close()){
-                foreach(SocketSessionCommunicator c in clients.Values.Cast<SocketSessionCommunicator>()) c.Close();
+            if (serverSocket.Close())
+            {
+                foreach (SocketSessionCommunicator c in clients.Values.Cast<SocketSessionCommunicator>()) c.Close();
                 clients.Clear();
                 System.Console.WriteLine("Bye!");
-            }else{
+            }
+            else
+            {
                 System.Console.WriteLine("Error on server communication module clean up.");
             }
         }
 
         public void Listen()
         {
-            System.Console.WriteLine($"Listening ...");
-            //In the future a separated thread can be instantiated here.
+            while (true)
+            {
+                System.Console.WriteLine($"Listening ...");
+                
+                //In the future a separated thread can be instantiated here.
 
-            var session = serverSocket.Listen();
-            clients.Add(session.sessionId, session);
-            Read(session);
+                var session = serverSocket.Listen();
+                clients.Add(session.sessionId, session);
+                Read(session.sessionId);
+            }
         }
 
-        public void Read(ISocketSessionCommunicator session)
+        public void Read(int sessionId)
         {
-            var data = session.Read().Result;
-            mediator.Notify(MessageType.Communicator, data);
+            var session = clients.GetValueOrDefault(sessionId);
+            var data = session?.Read().Result;
+            
+            if(data != null){
+                mediator.Notify(MessageType.Communicator, data);
+            }      
         }
 
-        public bool Write(MessageData data)
+        public void Write(Response data)
         {
-            try
-            {
-                var session = clients.GetValueOrDefault(data.SessionId);
-                session?.Write(data);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            var session = clients.GetValueOrDefault(data.SessionId);
+            session?.Write(data);
         }
     }
 }

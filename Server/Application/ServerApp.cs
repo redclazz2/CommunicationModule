@@ -1,8 +1,11 @@
-using System.Collections.Concurrent;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Server.Communicator;
 using Server.Data;
-using Server.Interface;
+using Shared.Data;
 using Shared.Interface;
+using Shared.Middleware;
 
 namespace Server.Application
 {
@@ -12,20 +15,17 @@ namespace Server.Application
 
         public ServerApp(){
             communicator = new ServerCommunicator(
-                this,
-                8059,
-                System.Net.Sockets.ProtocolType.Tcp
+                this
             );
         }
 
         public void Init(){
             System.Console.WriteLine("--- Initializing Server. ---");
 
-            System.Console.WriteLine("--- I: Initializing Communication Module. ---");
-            if(communicator.Init()){
-                System.Console.WriteLine("--- I: Success. ---");
-            }else{
-                System.Console.WriteLine("--- E: Failed to Initialize Communication Module .---");
+            
+            if(!communicator.Init()){
+                System.Console.WriteLine("--- E: Finalizing Program. ---");
+                return;
             }
 
             communicator.Listen();
@@ -35,16 +35,20 @@ namespace Server.Application
         {
             switch(message){
                 case MessageType.Communicator:
-                    var messageData = data as MessageData;
-                    System.Console.WriteLine($"Client: {messageData!.SessionId} says: {messageData!.Data}");
+                    var req = data as Request;
+                    var recievedDataString = Formatter.RemoveDelimiter(req.Data,req.Count);
+                    
+                    ExampleData recievedObject = Formatter.Deserialize<ExampleData>(recievedDataString);
+                    System.Console.WriteLine($"Client {req!.SessionId}, says: {recievedObject.Message}");
                     
                     //Do bussiness logic
                     
-                    System.Console.WriteLine("Sending response ...");
-                    communicator.Write(new MessageData(messageData.SessionId, "Pong"));
+                    /*System.Console.WriteLine("Sending response ...");
 
-                    System.Console.WriteLine("Closing server ...");
-                    communicator.Close();
+                    byte[] response = Formatter.Serialize("Pong");
+                    response = Formatter.AddDelimiter(response);
+
+                    communicator.Write(new Response(messageData.SessionId, response));*/
                 break;
             }
         }

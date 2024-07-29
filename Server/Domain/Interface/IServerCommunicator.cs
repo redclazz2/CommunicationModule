@@ -7,7 +7,9 @@ namespace Server.Interface
         public bool Init();
         public void Listen();
         public void Close();
-        public void Read(ISocketSessionCommunicator session);
-        public bool Write(MessageData data);
+
+        //TODO: Bound to dissapear when clients are separated in threads.
+        public void Read(int sessionId);
+        public void Write(Response data);
     }
 }

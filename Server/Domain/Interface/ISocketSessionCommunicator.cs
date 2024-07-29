@@ -4,8 +4,8 @@ namespace Server.Interface
 {
     public interface ISocketSessionCommunicator
     {
-        public Task<MessageData> Read();
-        public void Write(MessageData data);
+        public Task<Request> Read();
+        public void Write(Response data);
         public bool Close();
     }
 }

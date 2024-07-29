@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Client.Interface;
+using Shared.Data;
+using Shared.Middleware;
 
 namespace Client.Communicator
 {
@@ -63,10 +65,12 @@ namespace Client.Communicator
 
         public async void Write(object data)
         {
-            var message = "Ping!<|EOM|>";
-            var messageBytes = Encoding.UTF8.GetBytes(message);
+            var message = new ExampleData("Ping!");
+            var messageBytes = Formatter.Serialize(message);
+            messageBytes = Formatter.AddDelimiter(messageBytes);
+
             await socket.SendAsync(messageBytes, SocketFlags.None);
-            Console.WriteLine($"Socket client sent message: \"{message}\"");
+            Console.WriteLine($"Socket client sent message: \"{messageBytes.Length}\"");
         }
     }
 }

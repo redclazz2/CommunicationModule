@@ -23,7 +23,7 @@ namespace Server.Communicator
             socket = new Socket(
                 ipEndpoint.AddressFamily,
                 SocketType.Stream,
-                ProtocolType.Tcp
+                protocolType
             );
         }
 
@@ -57,15 +57,12 @@ namespace Server.Communicator
 
         public BaseSocketSessionCommunicator Listen()
         {
-            while (true)
-            {
-                var helper = socket.Accept();
-                System.Console.WriteLine("Client found ...");
+            var helper = socket.Accept();
+            System.Console.WriteLine("Client found ...");
 
-                var session = new SocketSessionCommunicator(helper, sessionCounter);
-                sessionCounter++;
-                return session;
-            }
+            var session = new SocketSessionCommunicator(helper, sessionCounter);
+            sessionCounter++;
+            return session;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Client.Application
         {
             communicator = new ClientCommunicator(
                 this,
-                8059,
+                8056,
                 System.Net.Sockets.ProtocolType.Tcp
             );
         }

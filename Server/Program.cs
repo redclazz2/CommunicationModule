@@ -1,4 +1,5 @@
-﻿using Server.Application;
+﻿using Microsoft.Extensions.Configuration;
+using Server.Application;
 
 namespace Server;
 

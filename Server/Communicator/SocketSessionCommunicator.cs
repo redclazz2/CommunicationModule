@@ -23,24 +23,16 @@ namespace Server.Communicator
         }
 
         //Modify the read procedures here.
-        public override async Task<MessageData> Read()
+        public override async Task<Request> Read()
         {
             var buffer = new byte[1024];
             var received = await socket.ReceiveAsync(buffer, SocketFlags.None);
-            var response = Encoding.UTF8.GetString(buffer, 0, received);
-            var data = "";
-
-            var eom = "<|EOM|>";
-            if (response.IndexOf(eom) > -1 /* is end of message */)
-            {
-                data = response.Replace(eom, "");
-            }
-
-            return new MessageData(sessionId, data);
+            
+            return new Request(sessionId, buffer, received);
         }
 
         //Modify write procedures here.
-        public override async void Write(MessageData data)
+        public override async void Write(Response data)
         {
             try
             {
