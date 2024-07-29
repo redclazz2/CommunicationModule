@@ -1,12 +1,11 @@
 using System.Net;
 using System.Net.Sockets;
-using Server.Domain.Base;
 using Server.Interface;
 using Shared.Helper;
 
 namespace Server.Communicator
 {
-    public class SocketServerCommunicator : ISocketServerCommunicator
+    public class SocketServerCommunicator
     {
         readonly IPEndPoint ipEndpoint;
         readonly Socket socket;
@@ -56,7 +55,7 @@ namespace Server.Communicator
             }
         }
 
-        public BaseSocketSessionCommunicator Listen()
+        public SocketSessionCommunicator Listen()
         {
             var helper = socket.Accept();
             Logger.Log(LoggerLevel.Info, "Client Found");

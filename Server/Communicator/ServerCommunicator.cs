@@ -8,8 +8,8 @@ namespace Server.Communicator
     public class ServerCommunicator : IServerCommunicator
     {
         private readonly IMediator mediator;
-        private readonly ISocketServerCommunicator serverSocket;
-        private readonly Dictionary<int, ISocketSessionCommunicator> clients = [];
+        private readonly SocketServerCommunicator serverSocket;
+        private readonly Dictionary<int, SocketSessionCommunicator> clients = [];
 
         public ServerCommunicator(IMediator mediator)
         {
@@ -40,13 +40,17 @@ namespace Server.Communicator
             Logger.Log(LoggerLevel.Info,"Closing server socket");
             if (serverSocket.Close())
             {
-                foreach (SocketSessionCommunicator c in clients.Values.Cast<SocketSessionCommunicator>()) c.Close();
+                foreach (SocketSessionCommunicator c in clients.Values.Cast<SocketSessionCommunicator>()) {
+                    if(!c.Close()){
+                        Logger.Log(LoggerLevel.Warning, $"Error while closing socket for client {c.sessionId}");
+                    }
+                }
                 clients.Clear();
                 Logger.Log(LoggerLevel.Info,"Bye");
             }
             else
             {
-                Logger.Log(LoggerLevel.Error,"Error on server communication module clean up");
+                Logger.Log(LoggerLevel.Error,"Error on communication module clean up");
             }
         }
 
@@ -58,7 +62,7 @@ namespace Server.Communicator
                 
                 //In the future a separated thread can be instantiated here.
 
-                var session = serverSocket.Listen();
+                SocketSessionCommunicator session = serverSocket.Listen();
                 clients.Add(session.sessionId, session);
                 Read(session.sessionId);
             }

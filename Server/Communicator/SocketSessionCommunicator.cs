@@ -1,14 +1,19 @@
 using System.Net.Sockets;
 using Server.Data;
-using Server.Domain.Base;
+using Server.Interface;
 
 namespace Server.Communicator
 {
-    public class SocketSessionCommunicator : BaseSocketSessionCommunicator
+    public class SocketSessionCommunicator
     {
-        public SocketSessionCommunicator(Socket socket, int sessionId):base(socket,sessionId){}
+        public int sessionId;
+        public Socket socket;
+        public SocketSessionCommunicator(Socket socket, int sessionId){
+            this.sessionId = sessionId;
+            this.socket = socket;
+        }
 
-        public override bool Close()
+        public  bool Close()
         {
             try
             {
@@ -21,7 +26,7 @@ namespace Server.Communicator
             }
         }
 
-        public override async Task<Request> Read()
+        public  async Task<Request> Read()
         {
             var buffer = new byte[1024];
             var received = await socket.ReceiveAsync(buffer, SocketFlags.None);
@@ -29,7 +34,7 @@ namespace Server.Communicator
             return new Request(sessionId, buffer, received);
         }
 
-        public override async void Write(Response data)
+        public  async void Write(Response data)
         {
             try
             {
