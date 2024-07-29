@@ -5,13 +5,12 @@ using Shared.Helper;
 
 namespace Server.Communicator
 {
-    public class SocketServerCommunicator
+    public class SocketServer
     {
         readonly IPEndPoint ipEndpoint;
         readonly Socket socket;
-        int sessionCounter = 0;
 
-        public SocketServerCommunicator(int port, ProtocolType protocolType)
+        public SocketServer(int port, ProtocolType protocolType)
         {
             IPAddress[] ips = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
 
@@ -55,14 +54,10 @@ namespace Server.Communicator
             }
         }
 
-        public SocketSessionCommunicator Listen()
+        public Socket Listen()
         {
             var helper = socket.Accept();
-            Logger.Log(LoggerLevel.Info, "Client Found");
-
-            var session = new SocketSessionCommunicator(helper, sessionCounter);
-            sessionCounter++;
-            return session;
+            return helper;
         }
     }
 }

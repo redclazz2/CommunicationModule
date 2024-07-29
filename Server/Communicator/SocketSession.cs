@@ -1,14 +1,13 @@
 using System.Net.Sockets;
 using Server.Data;
-using Server.Interface;
 
 namespace Server.Communicator
 {
-    public class SocketSessionCommunicator
+    public class SocketSession
     {
         public int sessionId;
         public Socket socket;
-        public SocketSessionCommunicator(Socket socket, int sessionId){
+        public SocketSession(Socket socket, int sessionId){
             this.sessionId = sessionId;
             this.socket = socket;
         }

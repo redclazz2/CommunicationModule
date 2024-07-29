@@ -2,20 +2,22 @@ using Server.Interface;
 using Server.Data;
 using Shared.Interface;
 using Shared.Helper;
+using System.Net.Sockets;
 
 namespace Server.Communicator
 {
     public class ServerCommunicator : IServerCommunicator
     {
         private readonly IMediator mediator;
-        private readonly SocketServerCommunicator serverSocket;
-        private readonly Dictionary<int, SocketSessionCommunicator> clients = [];
+        private readonly SocketServer serverSocket;
+        private readonly Dictionary<int, SocketSession> clients = [];
+        int sessionCounter = 0;
 
         public ServerCommunicator(IMediator mediator)
         {
             this.mediator = mediator;
             //TODO: Read Port and Protocol from configuration file
-            serverSocket = new SocketServerCommunicator(
+            serverSocket = new SocketServer(
                 8056,
                 System.Net.Sockets.ProtocolType.Tcp
             );
@@ -23,13 +25,16 @@ namespace Server.Communicator
 
         public bool Init()
         {
-            Logger.Log(LoggerLevel.Info,"Initializing Communication Module");
+            Logger.Log(LoggerLevel.Info, "Initializing Communication Module");
             var init = serverSocket.Init();
 
-            if(init){
-                Logger.Log(LoggerLevel.Info,"Success");
-            }else{
-                Logger.Log(LoggerLevel.Error,"Failed to Initialize Communication Module.");
+            if (init)
+            {
+                Logger.Log(LoggerLevel.Info, "Success");
+            }
+            else
+            {
+                Logger.Log(LoggerLevel.Error, "Failed to Initialize Communication Module.");
             }
 
             return init;
@@ -37,20 +42,22 @@ namespace Server.Communicator
 
         public void Close()
         {
-            Logger.Log(LoggerLevel.Info,"Closing server socket");
+            Logger.Log(LoggerLevel.Info, "Closing server socket");
             if (serverSocket.Close())
             {
-                foreach (SocketSessionCommunicator c in clients.Values.Cast<SocketSessionCommunicator>()) {
-                    if(!c.Close()){
+                foreach (SocketSession c in clients.Values.Cast<SocketSession>())
+                {
+                    if (!c.Close())
+                    {
                         Logger.Log(LoggerLevel.Warning, $"Error while closing socket for client {c.sessionId}");
                     }
                 }
                 clients.Clear();
-                Logger.Log(LoggerLevel.Info,"Bye");
+                Logger.Log(LoggerLevel.Info, "Bye");
             }
             else
             {
-                Logger.Log(LoggerLevel.Error,"Error on communication module clean up");
+                Logger.Log(LoggerLevel.Error, "Error on communication module clean up");
             }
         }
 
@@ -58,11 +65,17 @@ namespace Server.Communicator
         {
             while (true)
             {
-                Logger.Log(LoggerLevel.Info,"Listening");
-                
-                //In the future a separated thread can be instantiated here.
+                Logger.Log(LoggerLevel.Info, "Listening");
 
-                SocketSessionCommunicator session = serverSocket.Listen();
+                //In the future a separated thread can be instantiated here.
+                Socket sessionSocket = serverSocket.Listen();
+                Logger.Log(LoggerLevel.Info, $"Client Found. Id assigned: {sessionCounter}");
+                SocketSession session = new(
+                    sessionSocket,
+                    sessionCounter
+                );
+
+                sessionCounter++;
                 clients.Add(session.sessionId, session);
                 Read(session.sessionId);
             }
@@ -72,10 +85,11 @@ namespace Server.Communicator
         {
             var session = clients.GetValueOrDefault(sessionId);
             var data = session?.Read().Result;
-            
-            if(data != null){
+
+            if (data != null)
+            {
                 mediator.Notify(MessageType.Communicator, data);
-            }      
+            }
         }
 
         public void Write(Response data)
