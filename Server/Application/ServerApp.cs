@@ -1,9 +1,7 @@
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using Server.Communicator;
 using Server.Data;
 using Shared.Data;
+using Shared.Helper;
 using Shared.Interface;
 using Shared.Middleware;
 
@@ -20,11 +18,10 @@ namespace Server.Application
         }
 
         public void Init(){
-            System.Console.WriteLine("--- Initializing Server. ---");
+            Logger.Log(LoggerLevel.Info,"Initializing Server");
 
-            
             if(!communicator.Init()){
-                System.Console.WriteLine("--- E: Finalizing Program. ---");
+                Logger.Log(LoggerLevel.Error,"Finalizing Program");
                 return;
             }
 
@@ -35,14 +32,20 @@ namespace Server.Application
         {
             switch(message){
                 case MessageType.Communicator:
-                    var req = data as Request;
-                    var recievedDataString = Formatter.RemoveDelimiter(req.Data,req.Count);
                     
-                    ExampleData recievedObject = Formatter.Deserialize<ExampleData>(recievedDataString);
-                    System.Console.WriteLine($"Client {req!.SessionId}, says: {recievedObject.Message}");
+                    //Security logic can be handled here.
+
+                    var req = data as Request;
+                    var recievedDataString = Formatter.RemoveDelimiter(req!.Data,req.Count);
+                    Message<object> recievedObject = Formatter.Deserialize<Message<object>>(recievedDataString);
                     
                     //Do bussiness logic
-                    
+                    if(recievedObject.Command == 0){
+                        Logger.Log(LoggerLevel.Info,"Example data recieved");
+                        ExampleData exampleData = Formatter.Deserialize<ExampleData>(recievedObject.Data.ToString()!);
+                        Logger.Log(LoggerLevel.Info,$"Client {req!.SessionId}, says: {exampleData.Message}");
+                    }
+      
                     /*System.Console.WriteLine("Sending response ...");
 
                     byte[] response = Formatter.Serialize("Pong");

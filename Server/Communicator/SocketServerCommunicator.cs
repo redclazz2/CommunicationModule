@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using Server.Domain.Base;
 using Server.Interface;
+using Shared.Helper;
 
 namespace Server.Communicator
 {
@@ -58,7 +59,7 @@ namespace Server.Communicator
         public BaseSocketSessionCommunicator Listen()
         {
             var helper = socket.Accept();
-            System.Console.WriteLine("Client found ...");
+            Logger.Log(LoggerLevel.Info, "Client Found");
 
             var session = new SocketSessionCommunicator(helper, sessionCounter);
             sessionCounter++;

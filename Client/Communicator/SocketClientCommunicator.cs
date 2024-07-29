@@ -65,7 +65,11 @@ namespace Client.Communicator
 
         public async void Write(object data)
         {
-            var message = new ExampleData("Ping!");
+            var message = new Message<ExampleData>(
+                0,
+                new ExampleData("Ping!")
+            );
+            
             var messageBytes = Formatter.Serialize(message);
             messageBytes = Formatter.AddDelimiter(messageBytes);
 

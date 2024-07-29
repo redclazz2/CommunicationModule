@@ -1,6 +1,7 @@
 using Server.Interface;
 using Server.Data;
 using Shared.Interface;
+using Shared.Helper;
 
 namespace Server.Communicator
 {
@@ -22,30 +23,30 @@ namespace Server.Communicator
 
         public bool Init()
         {
-            System.Console.WriteLine("--- I: Initializing Communication Module. ---");
+            Logger.Log(LoggerLevel.Info,"Initializing Communication Module");
             var init = serverSocket.Init();
 
             if(init){
-                System.Console.WriteLine("--- I: Success. ---");
+                Logger.Log(LoggerLevel.Info,"Success");
             }else{
-                System.Console.WriteLine("--- E: Failed to Initialize Communication Module. ---");
+                Logger.Log(LoggerLevel.Error,"Failed to Initialize Communication Module.");
             }
 
-            return  init;
+            return init;
         }
 
         public void Close()
         {
-            System.Console.WriteLine("Closing server socket ...");
+            Logger.Log(LoggerLevel.Info,"Closing server socket");
             if (serverSocket.Close())
             {
                 foreach (SocketSessionCommunicator c in clients.Values.Cast<SocketSessionCommunicator>()) c.Close();
                 clients.Clear();
-                System.Console.WriteLine("Bye!");
+                Logger.Log(LoggerLevel.Info,"Bye");
             }
             else
             {
-                System.Console.WriteLine("Error on server communication module clean up.");
+                Logger.Log(LoggerLevel.Error,"Error on server communication module clean up");
             }
         }
 
@@ -53,7 +54,7 @@ namespace Server.Communicator
         {
             while (true)
             {
-                System.Console.WriteLine($"Listening ...");
+                Logger.Log(LoggerLevel.Info,"Listening");
                 
                 //In the future a separated thread can be instantiated here.
 

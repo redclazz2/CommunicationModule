@@ -1,5 +1,4 @@
 using System.Net.Sockets;
-using System.Text;
 using Server.Data;
 using Server.Domain.Base;
 
@@ -22,7 +21,6 @@ namespace Server.Communicator
             }
         }
 
-        //Modify the read procedures here.
         public override async Task<Request> Read()
         {
             var buffer = new byte[1024];
@@ -31,14 +29,11 @@ namespace Server.Communicator
             return new Request(sessionId, buffer, received);
         }
 
-        //Modify write procedures here.
         public override async void Write(Response data)
         {
             try
             {
-                var ackMessage = $"{data.Data}<|ACK|>";
-                var echoBytes = Encoding.UTF8.GetBytes(ackMessage);
-                await socket.SendAsync(echoBytes, 0);
+                await socket.SendAsync(data.Data, 0);
             }
             catch (Exception e)
             {
