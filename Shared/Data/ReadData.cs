@@ -1,4 +1,4 @@
-namespace Shared.Data
+namespace CommunicationShared.Data
 {
     public class ReadData(byte[] data, int count)
     {

@@ -1,6 +1,6 @@
-﻿using Client.Application;
+﻿using CommunicationClient.Application;
 
-namespace Client;
+namespace CommunicationClient;
 
 class Program
 {

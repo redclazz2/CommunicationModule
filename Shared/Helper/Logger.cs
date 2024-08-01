@@ -1,4 +1,4 @@
-namespace Shared.Helper
+namespace CommunicationShared.Helper
 {
     public enum LoggerLevel{
         Info,

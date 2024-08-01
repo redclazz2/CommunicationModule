@@ -1,6 +1,6 @@
-using Shared.Data;
+using CommunicationShared.Data;
 
-namespace Client.Interface
+namespace CommunicationClient.Interface
 {
     public interface IClientCommunicator
     {

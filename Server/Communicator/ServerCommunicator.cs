@@ -1,12 +1,12 @@
-using Server.Interface;
-using Server.Data;
-using Shared.Interface;
-using Shared.Helper;
+using CommunicationServer.Interface;
+using CommunicationServer.Data;
+using CommunicationShared.Interface;
+using CommunicationShared.Helper;
 using System.Net.Sockets;
-using Shared.Middleware;
-using Shared.Data;
+using CommunicationShared.Middleware;
+using CommunicationShared.Data;
 
-namespace Server.Communicator
+namespace CommunicationServer.Communicator
 {
     public class ServerCommunicator : IServerCommunicator
     {

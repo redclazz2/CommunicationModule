@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
-using Shared.Data;
+using CommunicationShared.Data;
 
-namespace Client.Communicator
+namespace CommunicationClient.Communicator
 {
     public class SocketClientCommunicator
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Server.Application;
+using CommunicationServer.Application;
 
-namespace Server;
+namespace CommunicationServer;
 
 class Program
 {

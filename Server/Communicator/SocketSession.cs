@@ -1,7 +1,7 @@
 using System.Net.Sockets;
-using Shared.Data;
+using CommunicationShared.Data;
 
-namespace Server.Communicator
+namespace CommunicationServer.Communicator
 {
     public class SocketSession
     {

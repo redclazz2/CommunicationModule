@@ -1,6 +1,6 @@
-using Server.Data;
+using CommunicationServer.Data;
 
-namespace Server.Interface
+namespace CommunicationServer.Interface
 {
     public interface IServerCommunicator
     {

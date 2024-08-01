@@ -1,11 +1,11 @@
-using Client.Communicator;
-using Client.Interface;
-using Shared.Data;
-using Shared.Helper;
-using Shared.Interface;
-using Shared.Middleware;
+using CommunicationClient.Communicator;
+using CommunicationClient.Interface;
+using CommunicationShared.Data;
+using CommunicationShared.Helper;
+using CommunicationShared.Interface;
+using CommunicationShared.Middleware;
 
-namespace Client.Application
+namespace CommunicationClient.Application
 {
     public class ClientApp : IMediator
     {

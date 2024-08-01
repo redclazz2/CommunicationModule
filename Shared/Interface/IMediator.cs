@@ -1,4 +1,4 @@
-namespace Shared.Interface
+namespace CommunicationShared.Interface
 {
     public interface IMediator
     {

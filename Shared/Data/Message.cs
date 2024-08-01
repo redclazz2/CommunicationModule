@@ -1,4 +1,4 @@
-namespace Shared.Data
+namespace CommunicationShared.Data
 {
     public class Message<T>(int Command, T Data)
     {

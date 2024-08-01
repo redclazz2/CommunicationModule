@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace Shared.Middleware
+namespace CommunicationShared.Middleware
 {
     public static class Formatter
     {

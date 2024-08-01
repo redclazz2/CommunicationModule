@@ -1,6 +1,6 @@
-using Shared.Data;
+using CommunicationShared.Data;
 
-namespace Server.Data
+namespace CommunicationServer.Data
 {
     public class Transaction(int sessionId, Message<object> data)
     {

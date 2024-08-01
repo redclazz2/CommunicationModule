@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Sockets;
-using Server.Interface;
-using Shared.Helper;
+using CommunicationServer.Interface;
+using CommunicationShared.Helper;
 
-namespace Server.Communicator
+namespace CommunicationServer.Communicator
 {
     public class SocketServer
     {

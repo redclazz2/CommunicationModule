@@ -1,10 +1,10 @@
 using System.Net.Sockets;
-using Client.Interface;
-using Shared.Data;
-using Shared.Interface;
-using Shared.Middleware;
+using CommunicationClient.Interface;
+using CommunicationShared.Data;
+using CommunicationShared.Interface;
+using CommunicationShared.Middleware;
 
-namespace Client.Communicator
+namespace CommunicationClient.Communicator
 {
     public class ClientCommunicator : IClientCommunicator
     {

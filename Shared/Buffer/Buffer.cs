@@ -1,6 +1,6 @@
 using System.Threading.Tasks.Dataflow;
 
-namespace Shared.Buffer
+namespace CommunicationShared.Buffer
 {
 
     public class Buffer
@@ -24,7 +24,7 @@ namespace Shared.Buffer
         }
 
         public void Read(){
-            
+
         }
     }
 }
