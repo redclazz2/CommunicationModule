@@ -18,14 +18,17 @@ namespace Shared.Middleware
             return toSend;
         }
 
-        public static byte[] AddDelimiter(byte[] send)
+        public static T Deserialize<T>(byte[] data, int count)
         {
-            byte[] delimiter = Encoding.UTF8.GetBytes(EOM);
-            byte[] finalSend = new byte[send.Length + delimiter.Length];
-            Buffer.BlockCopy(send, 0, finalSend, 0, send.Length);
-            Buffer.BlockCopy(delimiter, 0, finalSend, send.Length, delimiter.Length);
+            var sData = Encoding.UTF8.GetString(data,0,count);
+            T? result = JsonSerializer.Deserialize<T>(sData);
 
-            return finalSend;
+            if (result == null)
+            {
+                throw new InvalidOperationException("Null object after deserialization");
+            }
+
+            return result;
         }
 
         public static T Deserialize<T>(string data)
@@ -38,11 +41,6 @@ namespace Shared.Middleware
             }
 
             return result;
-        }
-
-        public static string RemoveDelimiter(byte[] data, int count){
-            var recievedString = Encoding.UTF8.GetString(data, 0, count);
-            return recievedString.Remove(recievedString.Length - EOM.Length);
         }
     }
 }

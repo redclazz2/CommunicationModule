@@ -1,13 +1,10 @@
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using Client.Interface;
 using Shared.Data;
-using Shared.Middleware;
 
 namespace Client.Communicator
 {
-    public class SocketClientCommunicator : ISocketClientCommunicator
+    public class SocketClientCommunicator
     {
         Socket socket;
 
@@ -48,33 +45,17 @@ namespace Client.Communicator
             }
         }
 
-        public async Task<object> Read()
+        public async Task<ReadData> Read()
         {
             var buffer = new byte[1_024];
-            var received = await socket.ReceiveAsync(buffer, SocketFlags.None);
-            var response = Encoding.UTF8.GetString(buffer, 0, received);
-            System.Console.WriteLine(response);
-            if (response.Contains("<|ACK|>"))  
-            {
-                Console.WriteLine(
-                    $"Socket client received acknowledgment: \"{response}\"");
-            }
+            var recieved = await socket.ReceiveAsync(buffer, SocketFlags.None);
 
-            return response;
+            return new ReadData(buffer, recieved);
         }
 
-        public async void Write(object data)
+        public async void Write(byte[] data)
         {
-            var message = new Message<ExampleData>(
-                0,
-                new ExampleData("Ping!")
-            );
-            
-            var messageBytes = Formatter.Serialize(message);
-            messageBytes = Formatter.AddDelimiter(messageBytes);
-
-            await socket.SendAsync(messageBytes, SocketFlags.None);
-            Console.WriteLine($"Socket client sent message: \"{messageBytes.Length}\"");
+            await socket.SendAsync(data, SocketFlags.None);
         }
     }
 }

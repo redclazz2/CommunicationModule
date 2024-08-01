@@ -3,6 +3,8 @@ using Server.Data;
 using Shared.Interface;
 using Shared.Helper;
 using System.Net.Sockets;
+using Shared.Middleware;
+using Shared.Data;
 
 namespace Server.Communicator
 {
@@ -88,14 +90,17 @@ namespace Server.Communicator
 
             if (data != null)
             {
-                mediator.Notify(MessageType.Communicator, data);
+                mediator.Notify(MessageType.Communicator, new Transaction(
+                    sessionId,
+                    Formatter.Deserialize<Message<object>>(data.Data, data.Count)
+                ));
             }
         }
 
-        public void Write(Response data)
+        public void Write(Transaction data)
         {
             var session = clients.GetValueOrDefault(data.SessionId);
-            session?.Write(data);
+            session?.Write(Formatter.Serialize(data.Data));
         }
     }
 }

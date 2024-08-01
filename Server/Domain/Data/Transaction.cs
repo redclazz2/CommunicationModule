@@ -1,6 +1,8 @@
+using Shared.Data;
+
 namespace Server.Data
 {
-    public class Response(int sessionId, byte[] data)
+    public class Transaction(int sessionId, Message<object> data)
     {
         private readonly int sessionId = sessionId;
 
@@ -8,9 +10,9 @@ namespace Server.Data
             get{ return sessionId;}
         }
 
-        private readonly byte[] data = data;
+        private readonly Message<object>  data = data;
 
-        public byte[] Data{
+        public Message<object>  Data{
             get { return data;}
         }
     }

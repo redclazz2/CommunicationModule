@@ -1,6 +1,9 @@
 using Client.Communicator;
 using Client.Interface;
+using Shared.Data;
+using Shared.Helper;
 using Shared.Interface;
+using Shared.Middleware;
 
 namespace Client.Application
 {
@@ -23,13 +26,19 @@ namespace Client.Application
 
             System.Console.WriteLine("--- I: Initializing Communication Module ---");
 
-            var connected = communicator.Connect(); 
+            var connected = communicator.Connect();
 
-            if(connected){
+            if (connected)
+            {
                 System.Console.WriteLine("--- I: Communication Stablished with server. ---");
-                communicator.Write();
+                communicator.Write(new Message<object>(
+                0,
+                new ExampleData("Ping!")
+            ));
                 communicator.Read();
-            }else{
+            }
+            else
+            {
                 System.Console.WriteLine(" --- E: Failed to initialize connection to network. ---");
             }
 
@@ -41,7 +50,17 @@ namespace Client.Application
             switch (message)
             {
                 case MessageType.Communicator:
-                    
+                    var m = data as Message<object>;
+
+                    //Do bussiness logic
+                    if (m.Command == 0)
+                    {
+                        Logger.Log(LoggerLevel.Info, "Example data recieved");
+                        ExampleData exampleData = Formatter.Deserialize<ExampleData>(m.Data.ToString()!);
+                        Logger.Log(LoggerLevel.Info, $"Server says: {exampleData.Message}");
+
+                        this.communicator.Close();
+                    }
                     break;
             }
         }

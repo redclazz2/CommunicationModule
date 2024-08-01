@@ -11,17 +11,20 @@ namespace Server.Application
     {
         readonly ServerCommunicator communicator;
 
-        public ServerApp(){
+        public ServerApp()
+        {
             communicator = new ServerCommunicator(
                 this
             );
         }
 
-        public void Init(){
-            Logger.Log(LoggerLevel.Info,"Initializing Server");
+        public void Init()
+        {
+            Logger.Log(LoggerLevel.Info, "Initializing Server");
 
-            if(!communicator.Init()){
-                Logger.Log(LoggerLevel.Error,"Finalizing Program");
+            if (!communicator.Init())
+            {
+                Logger.Log(LoggerLevel.Error, "Finalizing Program");
                 return;
             }
 
@@ -30,28 +33,23 @@ namespace Server.Application
 
         public void Notify(MessageType message, object data)
         {
-            switch(message){
+            switch (message)
+            {
                 case MessageType.Communicator:
-                    
-                    //Security logic can be handled here.
+                    var transaction = data as Transaction;
+                    var m = transaction!.Data;
 
-                    var req = data as Request;
-                    var recievedDataString = Formatter.RemoveDelimiter(req!.Data,req.Count);
-                    Message<object> recievedObject = Formatter.Deserialize<Message<object>>(recievedDataString);
-                    
                     //Do bussiness logic
-                    if(recievedObject.Command == 0){
-                        Logger.Log(LoggerLevel.Info,"Example data recieved");
-                        ExampleData exampleData = Formatter.Deserialize<ExampleData>(recievedObject.Data.ToString()!);
-                        Logger.Log(LoggerLevel.Info,$"Client {req!.SessionId}, says: {exampleData.Message}");
+                    if (m.Command == 0)
+                    {
+                        Logger.Log(LoggerLevel.Info, "Example data recieved");
+                        ExampleData exampleData = Formatter.Deserialize<ExampleData>(m.Data.ToString()!);
+                        Logger.Log(LoggerLevel.Info, $"Client {transaction!.SessionId}, says: {exampleData.Message}");
+
+                        System.Console.WriteLine("Sending response ...");
+                        Logger.Log(LoggerLevel.Info, "Sending response");
+                        communicator.Write(new Transaction(transaction.SessionId, new Message<object>(0, new ExampleData("Pong!"))));
                     }
-      
-                    /*System.Console.WriteLine("Sending response ...");
-
-                    byte[] response = Formatter.Serialize("Pong");
-                    response = Formatter.AddDelimiter(response);
-
-                    communicator.Write(new Response(messageData.SessionId, response));*/
                 break;
             }
         }

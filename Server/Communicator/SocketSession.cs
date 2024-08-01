@@ -1,5 +1,5 @@
 using System.Net.Sockets;
-using Server.Data;
+using Shared.Data;
 
 namespace Server.Communicator
 {
@@ -25,19 +25,19 @@ namespace Server.Communicator
             }
         }
 
-        public  async Task<Request> Read()
+        public  async Task<ReadData> Read()
         {
             var buffer = new byte[1024];
-            var received = await socket.ReceiveAsync(buffer, SocketFlags.None);
+            var recieved = await socket.ReceiveAsync(buffer, SocketFlags.None);
             
-            return new Request(sessionId, buffer, received);
+            return new ReadData(buffer, recieved);
         }
 
-        public  async void Write(Response data)
+        public  async void Write(byte[] data)
         {
             try
             {
-                await socket.SendAsync(data.Data, 0);
+                await socket.SendAsync(data, 0);
             }
             catch (Exception e)
             {

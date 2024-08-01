@@ -1,15 +1,18 @@
 using System.Net.Sockets;
 using Client.Interface;
+using Shared.Data;
 using Shared.Interface;
+using Shared.Middleware;
 
 namespace Client.Communicator
 {
     public class ClientCommunicator : IClientCommunicator
     {
         IMediator mediator;
-        ISocketClientCommunicator socket;
+        SocketClientCommunicator socket;
 
-        public ClientCommunicator(IMediator mediator, int port, ProtocolType protocolType){
+        public ClientCommunicator(IMediator mediator, int port, ProtocolType protocolType)
+        {
             this.mediator = mediator;
             socket = new SocketClientCommunicator(
                 port,
@@ -27,14 +30,22 @@ namespace Client.Communicator
             return socket.Connect().Result;
         }
 
-        public object Read()
+        public void Read()
         {
-            return socket.Read().Result;
+            var data = socket.Read().Result;
+
+            if (data != null)
+            {
+                mediator.Notify(MessageType.Communicator,
+                    Formatter.Deserialize<Message<object>>(data.Data, data.Count)
+                );
+            }
+
         }
 
-        public void Write()
+        public void Write(Message<object> message)
         {
-            socket.Write("Pong");
+            socket.Write(Formatter.Serialize(message));
         }
     }
 }
